@@ -28,3 +28,30 @@ systemctl stop NetworkManager.service
 systemctl disable NetworkManager.service
 
 systemctl restart network
+
+
+# Customize vim env
+cat > /root/.vimrc << EOF
+set background=dark
+
+EOF
+
+# Customize bash env
+cat > /root/.bashrc << EOF
+# .bashrc
+
+# User specific aliases and functions
+
+alias rm='rm -i'
+alias cp='cp -i'
+alias mv='mv -i'
+
+PS1='[\[\033[34;1m\]\u\[\033[39;0m\]@\[\033[31;2m\]\H \[\033[34;1m\]\w\[\033[39;0m\]]# '
+
+# Source global definitions
+if [ -f /etc/bashrc ]; then
+        . /etc/bashrc
+fi
+
+EOF
+
