@@ -191,6 +191,22 @@ chmod a+x /etc/fwrules/v6-ip6tables
 # /etc/profile tuning
 sed -i "s/HISTSIZE=1000/HISTSIZE=20000\\nTMOUT=7200/" /etc/profile
 
+# log shell command to /var/log/message
+cat >> /etc/bashrc << EOF
+[ \$SUDO_USER ] && user=\$SUDO_USER || user=`who am i|awk '{print $1}'`
+
+if [ "\$BASH" ]; then
+    PROMPT_COMMAND='history -a >(logger -t "\$user=>\$USER[\$$] \$SSH_CONNECTION")'
+    readonly PROMPT_COMMAND
+    readonly HISTSIZE
+    readonly HISTFILE
+    readonly HISTFILESIZE
+    readonly HISTIGNORE
+    readonly HISTCONTROL
+    readonly HOME
+fi
+EOF
+
 #update package
 yum -y update
 
