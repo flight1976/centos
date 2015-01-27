@@ -192,8 +192,11 @@ chmod a+x /etc/fwrules/v6-ip6tables
 sed -i "s/HISTSIZE=1000/HISTSIZE=20000\\nTMOUT=7200/" /etc/profile
 
 # log shell command to /var/log/message
+# ref: 
+# http://webplay.pro/linux/syslog-log-bash-history-every-user.html
+# http://stackoverflow.com/questions/3522341/identify-user-in-a-bash-script-called-by-sudo
 cat >> /etc/bashrc << EOF
-[ \$SUDO_USER ] && user=\$SUDO_USER || user=`who am i|awk '{print $1}'`
+[ \$SUDO_USER ] && user=\$SUDO_USER || user=\`who am i|awk '{print \$1}'\`
 
 if [ "\$BASH" ]; then
     PROMPT_COMMAND='history -a >(logger -t "\$user=>\$USER[\$$] \$SSH_CONNECTION")'
