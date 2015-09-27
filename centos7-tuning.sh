@@ -33,6 +33,9 @@ systemctl disable firewalld.service
 systemctl stop firewalld.service
 systemctl enable iptables.service
 systemctl start iptables.service
+systemctl enable ip6tables.service
+systemctl start ip6tables.service
+
 
 # Customize vim env
 cat > /root/.vimrc << EOF
