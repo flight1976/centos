@@ -194,24 +194,35 @@ chmod a+x /etc/fwrules/v6-ip6tables
 # /etc/profile tuning
 sed -i "s/HISTSIZE=1000/HISTSIZE=20000\\nTMOUT=7200/" /etc/profile
 
-# log shell command to /var/log/message
+# log shell command to /var/log/history
 # ref: 
 # http://webplay.pro/linux/syslog-log-bash-history-every-user.html
 # http://stackoverflow.com/questions/3522341/identify-user-in-a-bash-script-called-by-sudo
+# https://coderwall.com/p/anphha/save-bash-history-in-syslog-on-centos
 cat >> /etc/bashrc << EOF
-[ \$SUDO_USER ] && user=\$SUDO_USER || user=\`who am i|awk '{print \$1}'\`
+PROMPT_COMMAND=\$(history -a)
+typeset -r PROMPT_COMMAND
 
-if [ "\$BASH" ]; then
-    PROMPT_COMMAND='history -a >(logger -t "\$user=>\$USER[\$$] \$SSH_CONNECTION")'
-    readonly PROMPT_COMMAND
-    readonly HISTSIZE
-    readonly HISTFILE
-    readonly HISTFILESIZE
-    readonly HISTIGNORE
-    readonly HISTCONTROL
-    readonly HOME
-fi
+function log2syslog
+{
+   [ \$SUDO_USER ] && user=\$SUDO_USER || user=\`who am i|awk '{print \$1}'\`
+   declare command
+   command=\$BASH_COMMAND
+   logger -p local1.notice -t bash -i -- "\$user=>\$USER[\$$]" : \$PWD : \$command
+
+}
+trap log2syslog DEBUG
 EOF
+
+# update syslog
+cat > /etc/rsyslog.d/history.conf << EOF
+# history
+local1.notice                                           /var/log/history
+EOF
+
+# update logrotate
+sed -i '1s/^/\/var\/log\/history\n/' /etc/logrotate.d/syslog
+
 
 #update package
 yum -y update
