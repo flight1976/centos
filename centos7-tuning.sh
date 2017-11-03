@@ -3,10 +3,7 @@
 # testing scripts
 
 # Install EPEL repo
-# Todo: check epel rpm file. Display warning message if epel rpm not exist.
-EPEL_RPM="http://mirror01.idc.hinet.net/epel/7/x86_64/e/epel-release-7-9.noarch.rpm"
-rpm -ivh $EPEL_RPM
-
+yum -y install epel-release
 
 # Change yum repo to Taiwan mirror site (http://mirror01.idc.hinet.net/centos)
 # backup config 
